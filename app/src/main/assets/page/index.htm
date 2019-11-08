@@ -2,7 +2,7 @@
     <div class="row titlebar">
         MBA提前面试
     </div>
-    <div class="message hide" style="padding: 2rem;"></div>
+    <div class="message" style="display: none;padding: 2rem;"></div>
     <div class="pnlChouTi">
         <div style="margin: 1rem;text-align: center;">请点击开始按钮进行抽题</div>
         <div style="margin: 1rem;text-align: center;">
@@ -71,18 +71,24 @@
         });
 
         function chouTi(){
-            var i = getRandom(0);
-            var j = getRandom(j);
+            var i = getRandom(tiShu);
+            var j = getRandomWithEx(tiShu, i);
             chouTiGunDongEle.data('timu', i.toString() + "," + j.toString());
-            chouTiGunDongEle.html(i.toString() + "&nbsp;&nbsp;&nbsp;" + j.toString());
+            chouTiGunDongEle.html(i.toString() + "，&nbsp;&nbsp;&nbsp;" + j.toString());
         }
 
-        function getRandom(ex){
-            var i = Math.round(Math.random()*tiShu);
-            if(i == 0 || i == ex){
-                while(i == 0 || i == ex){
-                    i = Math.round(Math.random()*tiShu);
-                }
+        function getRandom(maxNumber){
+            var i = Math.round(Math.random()*maxNumber);
+            if( i == 0){
+                i = maxNumber;
+            }
+            return i;
+        }
+
+        function getRandomWithEx(maxNumber, ex){
+            var i = getRandom(maxNumber);
+            while(i == ex){
+                i = getRandom(maxNumber);
             }
             return i;
         }
