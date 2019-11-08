@@ -1,0 +1,63 @@
+<div class="cs_page cscontainer" id="page_asset_seldir">
+    <div class="row titlebar">
+        文件浏览
+    </div>
+    <div>
+        <div class="row csrow currentdir">
+            ..
+        </div>
+        <div class="row csrow btnseldir" data-dir="..">
+            ..
+        </div>
+        <div class="folders">
+
+        </div>
+    </div>
+    <script>
+	$(function(){
+		var pageEle = $('#page_asset_seldir');
+
+		function gotoNext(s){
+			pageEle.find('.folders').empty();
+			var data = local.getChild(s);
+			if(data == ''){
+				return;
+			}
+			var arr_data = data.split(';');
+			var arr_dir = arr_data[0].split(',');
+			for(var i=0;i<arr_dir.length;i++){
+				var s = arr_dir[i];
+				if(s.length > 0){
+					var n = $('<div class="row csrow btnseldir" data-dir="'+s+'">'+s+'</div>');
+					pageEle.find('.folders').append(n);
+				}
+			}
+			var arr_file = arr_data[1].split(',');
+			for(var i=0;i<arr_file.length;i++){
+				var s = arr_file[i];
+				if(s.length > 0){
+					var n = $('<div class="row csrow btnselfile" data-file="'+s+'">'+s+'</div>');
+					pageEle.find('.folders').append(n);
+				}
+			}
+			pageEle.find('.currentdir').html(arr_data[2])
+		}
+
+		pageEle.on('click', '.btnseldir', function(){
+			var self = $(this);
+			gotoNext(self.data('dir'));
+		});
+
+        pageEle.on('click', '.btnselfile', function(){
+			var self = $(this);
+			$.cs.goBack({
+			    refresh: 1,
+			    refreshPara: self.data('file')
+			});
+		});
+
+		gotoNext('');
+	});
+
+    </script>
+</div>

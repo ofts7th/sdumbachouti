@@ -1,0 +1,38 @@
+<div class="cs_page fullfill cscontainer" id="page_asset_config">
+    <div class="row titlebar">
+        程序设置
+    </div>
+    <div class="row csrow">
+        <div class="col-xs-4">
+            数据文件路径
+        </div>
+        <div class="col-xs-8 lblDataFilePath">
+
+        </div>
+    </div>
+    <div class="row csrow">
+        <div class="col-xs-12">
+            <button class="btn btn-default selfile">选择文件</button>
+        </div>
+    </div>
+
+    <div class="refreshtrigger"></div>
+    <script>
+        $(function(){
+            var pageEle = $('#page_asset_config');
+            var refreshConfig = function(){
+                pageEle.find('.lblDataFilePath').html(local.getConfig('configDataFilePath'));
+            };
+            pageEle.find('.selfile').click(function(){
+                previousPage = "config.htm";
+                $.cs.gotoPage({source: 'asset', url: 'selfile.htm'});
+            });
+            pageEle.find('.refreshtrigger').click(function(){
+                 var self = $(this);
+                 local.saveConfig('configDataFilePath', self.data('refreshPara'));
+                 refreshConfig();
+            });
+            refreshConfig();
+        });
+    </script>
+</div>

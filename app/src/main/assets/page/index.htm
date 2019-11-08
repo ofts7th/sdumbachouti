@@ -1,0 +1,62 @@
+<div class="cs_page fullfill cscontainer" id="page_asset_index">
+    <div class="row titlebar">
+        MBA提前面试
+    </div>
+    <div style="padding: 2rem;">请点击开始按钮进行抽题</div>
+    <div style="padding: 2rem;">
+        <div class="startChouTi btn btn-default form-control">开始</div>
+    </div>
+    <div class="timuGundong"
+         style="padding: 2rem; text-align: center;font-size: 3rem;display: none;"></div>
+    <div style="padding: 2rem;" class="myTiMu"></div>
+
+    <div style="position: absolute; bottom: 1rem; right: 1rem; width: 3rem; height: 3rem; font-size: 2rem;">
+        <span class="glyphicon glyphicon-list assetpagelink" data-url="config.htm"
+              aria-hidden="true"></span>
+    </div>
+    <script>
+        var tiShu = 100;
+        var chouTiGunDongEle = $('#page_asset_index .timuGundong');
+
+        $(function(){
+            var pageEle = $('#page_asset_index');
+            var chouTiing = false;
+            var chouTiInterval = null;
+
+            pageEle.find('.startChouTi').click(function(){
+                chouTiing = !chouTiing;
+                var self = $(this);
+                if(chouTiing){
+                    self.html('停止');
+                    chouTiGunDongEle.html('');
+                    chouTiGunDongEle.show();
+                    chouTiInterval = setInterval(chouTi, 200);
+                }else{
+                    self.html('开始');
+                    if(chouTiInterval){
+                        chouTiGunDongEle.hide();
+                        clearInterval(chouTiInterval);
+                        chouTiInterval = null;
+                    }
+                }
+            });
+        });
+
+        function chouTi(){
+            var i = getRandom(0);
+            var j = getRandom(j);
+            chouTiGunDongEle.data('timu', i.toString() + "," + j.toString());
+            chouTiGunDongEle.html(i.toString() + "&nbsp;&nbsp;&nbsp;" + j.toString());
+        }
+
+        function getRandom(ex){
+            var i = Math.round(Math.random()*tiShu);
+            if(i == 0 || i == ex){
+                while(i == 0 || i == ex){
+                    i = Math.round(Math.random()*tiShu);
+                }
+            }
+            return i;
+        }
+    </script>
+</div>
