@@ -21,7 +21,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
+import cs.data.DataTable;
 import cs.mobile.WebViewActivity;
 import cs.string;
 
@@ -401,5 +403,36 @@ public class WebViewActivityUtil {
 
         s += currentDir.getAbsolutePath();
         return s;
+    }
+
+    DataTable dataTable = null;
+
+    public int getTiMuCount() {
+        if (dataTable != null)
+            return dataTable.rows.size();
+
+        String path = Util.getConfig("configDataFilePath");
+        if (string.IsNullOrEmpty(path))
+            return 0;
+
+        File file = new File(path);
+        if (!file.exists())
+            return 0;
+
+        dataTable = ExcelManager.readExcelFile(file);
+        if (dataTable != null)
+            return dataTable.rows.size();
+
+        return 0;
+    }
+
+    public String getTiMu(int tiMuId) {
+        if (dataTable == null)
+            return "";
+        ArrayList<Map<String, Object>> rows = dataTable.select(x -> Util.parseIntFromDataRow(x, "Id") == tiMuId);
+        if (rows.size() > 0) {
+            return rows.get(0).get("Content").toString();
+        }
+        return "";
     }
 }

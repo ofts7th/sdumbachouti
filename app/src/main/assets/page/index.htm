@@ -2,43 +2,71 @@
     <div class="row titlebar">
         MBA提前面试
     </div>
-    <div style="padding: 2rem;">请点击开始按钮进行抽题</div>
-    <div style="padding: 2rem;">
-        <div class="startChouTi btn btn-default form-control">开始</div>
+    <div class="message hide" style="padding: 2rem;"></div>
+    <div class="pnlChouTi">
+        <div style="margin: 1rem;text-align: center;">请点击开始按钮进行抽题</div>
+        <div style="margin: 1rem;text-align: center;">
+            <div class="startChouTi btn btn-default" style="font-size: 2rem; padding: 2rem 5rem;">开始</div>
+        </div>
+        <div class="timuGundong"
+             style="margin: 1rem; text-align: center;font-size: 3rem;display: none;"></div>
+        <div style="margin: 1rem;" class="myTiMu"></div>
     </div>
-    <div class="timuGundong"
-         style="padding: 2rem; text-align: center;font-size: 3rem;display: none;"></div>
-    <div style="padding: 2rem;" class="myTiMu"></div>
-
     <div style="position: absolute; bottom: 1rem; right: 1rem; width: 3rem; height: 3rem; font-size: 2rem;">
         <span class="glyphicon glyphicon-list assetpagelink" data-url="config.htm"
               aria-hidden="true"></span>
     </div>
     <script>
-        var tiShu = 100;
+        var tiShu = 0;
         var chouTiGunDongEle = $('#page_asset_index .timuGundong');
 
         $(function(){
             var pageEle = $('#page_asset_index');
-            var chouTiing = false;
+
+            var step = 0;
             var chouTiInterval = null;
 
+            tiShu = local.getTiMuCount();
+            if(tiShu == 0){
+                pageEle.find('.message').html('尚未指定数据文件');
+                pageEle.find('.message').show();
+                pageEle.find('.pnlChouTi').hide();
+                return;
+            }
             pageEle.find('.startChouTi').click(function(){
-                chouTiing = !chouTiing;
                 var self = $(this);
-                if(chouTiing){
-                    self.html('停止');
-                    chouTiGunDongEle.html('');
-                    chouTiGunDongEle.show();
-                    chouTiInterval = setInterval(chouTi, 200);
-                }else{
-                    self.html('开始');
-                    if(chouTiInterval){
-                        chouTiGunDongEle.hide();
-                        clearInterval(chouTiInterval);
-                        chouTiInterval = null;
-                    }
+                switch(step){
+                    case 0:
+                        self.html('停止');
+                        chouTiGunDongEle.html('');
+                        chouTiGunDongEle.show();
+                        chouTiInterval = setInterval(chouTi, 200);
+                        break;
+                    case 1:
+                        self.html('清空');
+                        if(chouTiInterval){
+                            chouTiGunDongEle.hide();
+                            clearInterval(chouTiInterval);
+                            chouTiInterval = null;
+                        }
+
+                        var ele = pageEle.find('.myTiMu');
+                        ele.empty();
+                        var arr_timu = chouTiGunDongEle.data('timu').split(',');
+                        arr_timu.forEach((item, idx, arr)=>{
+                            var e = $('<div style="margin: 1rem;"></div>');
+                            e.html('题目' + item + "<br />" + local.getTiMu(parseInt(item)));
+                            ele.append(e);
+                        });
+                        ele.show();
+                        break;
+                    case 2:
+                        self.html('开始');
+                        pageEle.find('.myTiMu').hide();
+                        step = -1;
+                        break;
                 }
+                step++;
             });
         });
 

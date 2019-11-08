@@ -52,7 +52,7 @@
 			var self = $(this);
 			$.cs.goBack({
 			    refresh: 1,
-			    refreshPara: self.data('file')
+			    refreshPara: pageEle.find('.currentdir').html() + "/" + self.data('file')
 			});
 		});
 

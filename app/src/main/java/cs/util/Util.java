@@ -15,6 +15,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -376,5 +378,20 @@ public class Util {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static int parseIntFromDataRow(Map<String, Object> row, String key) {
+        if (!row.containsKey(key))
+            return 0;
+        Object obj = row.get(key);
+        if (obj == null)
+            return 0;
+        int i = 0;
+        try {
+            i = Integer.valueOf(obj.toString());
+        } catch (Exception ex) {
+
+        }
+        return i;
     }
 }

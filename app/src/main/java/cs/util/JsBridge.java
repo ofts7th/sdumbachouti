@@ -78,4 +78,14 @@ public class JsBridge {
     public String getChild(String s) {
         return this.util.getChild(s);
     }
+
+    @JavascriptInterface
+    public int getTiMuCount() {
+        return this.util.getTiMuCount();
+    }
+
+    @JavascriptInterface
+    public String getTiMu(int id) {
+        return this.util.getTiMu(id);
+    }
 }
