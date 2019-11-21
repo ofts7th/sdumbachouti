@@ -36,13 +36,10 @@
                  var self = $(this);
                  local.saveConfig('configDataFilePath', self.data('refreshPara'));
                  refreshConfig();
-                 alert('操作成功，请重启应用');
-                 local.exit();
             });
             pageEle.find('.btnClearCtRecord').click(function(){
                  local.clearCtRecord();
-                 alert('操作成功，请重启应用');
-                 local.exit();
+                 alert('操作成功');
             });
             refreshConfig();
         });

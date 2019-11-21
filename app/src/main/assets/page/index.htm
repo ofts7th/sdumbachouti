@@ -22,47 +22,78 @@
         <div style="margin: 1rem;" class="myTiMu"></div>
     </div>
     <script>
-        var arr_TiMuIds = [];
-        var chouTiGunDongEle = $('#page_asset_index .timuGundong');
-
-        function updateCurrentTiMuShu(){
-            $('#page_asset_index .spanTiMuCount').html(arr_TiMuIds.length);
-        }
-        function deleteTiMu(id){
-            var idx = $.inArray(id, arr_TiMuIds);
-            if(idx > -1){
-                arr_TiMuIds.splice(idx, 1);
-            }
-        }
-
         $(function(){
             var pageEle = $('#page_asset_index');
-
             var step = 0;
             var chouTiInterval = null;
+            var arr_TiMuIds = [];
+            var chouTiGunDongEle = pageEle.find('.timuGundong');
 
-            var strTiMuIds = local.getTiMuIds();
-            if(strTiMuIds == ''){
-                pageEle.find('.message').html('尚未指定数据文件');
-                pageEle.find('.message').show();
-                pageEle.find('.pnlChouTi').hide();
-                return;
-            }
-            arr_TiMuIds = strTiMuIds.split(',');
-            var strTodayRecords = local.getTodayCtRecord();
-            if(strTodayRecords != ''){
-                var arr_TodayRecords = strTodayRecords.split(',');
-                arr_TodayRecords.forEach(function(item){
-                    deleteTiMu(item);
-                });
-            }
-            if(arr_TiMuIds.length < 2){
-                pageEle.find('.message').html('请清空抽题记录');
-                pageEle.find('.message').show();
-                pageEle.find('.pnlChouTi').hide();
-                return;
-            }
-            updateCurrentTiMuShu();
+            var updateCurrentTiMuShu = function(){
+                pageEle.find('.spanTiMuCount').html(arr_TiMuIds.length);
+            };
+            var deleteTiMu = function(id){
+                var idx = $.inArray(id, arr_TiMuIds);
+                if(idx > -1){
+                    arr_TiMuIds.splice(idx, 1);
+                }
+            };
+            var pageLoad = function(){
+                var strTiMuIds = local.getTiMuIds();
+                if(strTiMuIds == ''){
+                    pageEle.find('.message').html('尚未指定数据文件');
+                    pageEle.find('.message').show();
+                    pageEle.find('.pnlChouTi').hide();
+                    return;
+                }
+                arr_TiMuIds = strTiMuIds.split(',');
+                var strTodayRecords = local.getTodayCtRecord();
+                if(strTodayRecords != ''){
+                    var arr_TodayRecords = strTodayRecords.split(',');
+                    arr_TodayRecords.forEach(function(item){
+                        deleteTiMu(item);
+                    });
+                }
+                if(arr_TiMuIds.length < 2){
+                    pageEle.find('.message').html('请清空抽题记录');
+                    pageEle.find('.message').show();
+                    pageEle.find('.pnlChouTi').hide();
+                    return;
+                }
+                updateCurrentTiMuShu();
+            };
+
+            var restartChouti = function(){
+                if(arr_TiMuIds.length < 2){
+                    pageEle.find('.message').html('请清空抽题记录');
+                    pageEle.find('.message').show();
+                    pageEle.find('.pnlChouTi').hide();
+                    return;
+                }
+                pageEle.find('.myTiMu').hide();
+                pageEle.find('.startChouTi').html('开始');
+                updateCurrentTiMuShu();
+                step = -1;
+            };
+
+            var chouTi = function(){
+                var tiShu = arr_TiMuIds.length;
+                var i = getRandom(tiShu);
+                var j = getRandomWithEx(tiShu, i);
+                i--;
+                j--;
+                chouTiGunDongEle.data('timu', arr_TiMuIds[i] + "," + arr_TiMuIds[j]);
+                chouTiGunDongEle.html(arr_TiMuIds[i] + "，&nbsp;&nbsp;" + arr_TiMuIds[j]);
+            };
+
+            var stopInterval = function(){
+                if(chouTiInterval){
+                    chouTiGunDongEle.hide();
+                    clearInterval(chouTiInterval);
+                    chouTiInterval = null;
+                }
+            };
+
             pageEle.find('.startChouTi').click(function(){
                 var self = $(this);
                 switch(step){
@@ -73,13 +104,8 @@
                         chouTiInterval = setInterval(chouTi, 200);
                         break;
                     case 1:
+                        stopInterval();
                         self.html('清空');
-                        if(chouTiInterval){
-                            chouTiGunDongEle.hide();
-                            clearInterval(chouTiInterval);
-                            chouTiInterval = null;
-                        }
-
                         var ele = pageEle.find('.myTiMu');
                         ele.empty();
                         var arr_timu = chouTiGunDongEle.data('timu').split(',');
@@ -94,31 +120,24 @@
                         ele.show();
                         break;
                     case 2:
-                        self.html('开始');
-                        updateCurrentTiMuShu();
-                        if(arr_TiMuIds.length < 2){
-                            pageEle.find('.message').html('请清空抽题记录');
-                            pageEle.find('.message').show();
-                            pageEle.find('.pnlChouTi').hide();
-                            return;
-                        }
-                        pageEle.find('.myTiMu').hide();
-                        step = -1;
+                        restartChouti();
                         break;
                 }
                 step++;
             });
-        });
 
-        function chouTi(){
-            var tiShu = arr_TiMuIds.length;
-            var i = getRandom(tiShu);
-            var j = getRandomWithEx(tiShu, i);
-            i--;
-            j--;
-            chouTiGunDongEle.data('timu', arr_TiMuIds[i] + "," + arr_TiMuIds[j]);
-            chouTiGunDongEle.html(arr_TiMuIds[i] + "，&nbsp;&nbsp;" + arr_TiMuIds[j]);
-        }
+            pageEle.on('resume', function(){
+                pageLoad();
+            });
+            pageEle.on('pause', function(){
+                stopInterval();
+                restartChouti();
+                step++;
+            });
+            pageEle.on('load', function(){
+                pageLoad();
+            });
+        });
 
         function getRandom(maxNumber){
             var i = Math.round(Math.random()*maxNumber);

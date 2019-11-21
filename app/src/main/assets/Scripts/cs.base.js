@@ -114,6 +114,7 @@ $.extend($.cs, {
         if(history.length > 0){
             var lastPage = $('#' + history[history.length - 1].pageId);
             lastPage.removeClass('active');
+            lastPage.find('.cs_page').trigger('pause');
             lastPage.hide();
         }
         page.addClass('active');
@@ -152,7 +153,11 @@ $.extend($.cs, {
                 		refreshTriggerEle.data('refreshPara', o.refreshPara);
                 	}
                     refreshTriggerEle.trigger('click');
+                }else{
+                    page.find('.cs_page').trigger('resume', o);
                 }
+            }else{
+                page.find('.cs_page').trigger('resume');
             }
         } else {
             local.exit();
@@ -180,6 +185,8 @@ $.extend($.cs, {
         		$.cs.gotoPage({url: self.data('initurl'), containerId: self.attr('id')});
         	}
         });
+
+        pageEle.find('.cs_page').trigger('load');
     },
 
     init: function() {
@@ -202,5 +209,5 @@ function loadAfterCsInited(callBack) {
     });
 }
 $(function() {
-    loadAfterCsInited(pageload);
+    loadAfterCsInited(pageInited);
 });
