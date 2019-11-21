@@ -20,7 +20,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cs.data.DataTable;
@@ -117,23 +119,37 @@ public class WebViewActivityUtil {
 
     DataTable dataTable = null;
 
-    public int getTiMuCount() {
+    public String getTiMuIds() {
         if (dataTable != null)
-            return dataTable.rows.size();
+            return getTiMuIds(dataTable);
 
         String path = Util.getConfig("configDataFilePath");
         if (string.IsNullOrEmpty(path))
-            return 0;
+            return "";
 
         File file = new File(path);
         if (!file.exists())
-            return 0;
+            return "";
 
         dataTable = ExcelManager.readExcelFile(file);
         if (dataTable != null)
-            return dataTable.rows.size();
+            return getTiMuIds(dataTable);
 
-        return 0;
+        return "";
+    }
+
+    String getTiMuIds(DataTable dt) {
+        StringBuilder sb = new StringBuilder();
+        boolean isFirst = true;
+        for (Map<String, Object> row : dt.rows) {
+            if (isFirst) {
+                isFirst = false;
+            } else {
+                sb.append(",");
+            }
+            sb.append(row.get("Id"));
+        }
+        return sb.toString();
     }
 
     public String getTiMu(int tiMuId) {
@@ -144,5 +160,28 @@ public class WebViewActivityUtil {
             return rows.get(0).get("Content").toString();
         }
         return "";
+    }
+
+    public String getTodayCtRecord() {
+        List<List<String>> ret = DbHelper.query("select id, ctdate from cthistory");
+        StringBuilder sb = new StringBuilder();
+        boolean isFirst = true;
+        for (List<String> row : ret) {
+            if (isFirst) {
+                isFirst = false;
+            } else {
+                sb.append(",");
+            }
+            sb.append(row.get(0));
+        }
+        return sb.toString();
+    }
+
+    public void addTodayCtRecord(int id) {
+        DbHelper.execNonquery("insert into cthistory(id, ctdate) values (" + id + ",'" + Util.formatDate(new Date()) + "')");
+    }
+
+    public void clearCtRecord() {
+        DbHelper.execNonquery("delete from cthistory");
     }
 }

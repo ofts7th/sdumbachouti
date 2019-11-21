@@ -40,12 +40,27 @@ public class JsBridge {
     }
 
     @JavascriptInterface
-    public int getTiMuCount() {
-        return this.util.getTiMuCount();
+    public String getTiMuIds() {
+        return this.util.getTiMuIds();
     }
 
     @JavascriptInterface
     public String getTiMu(int id) {
         return this.util.getTiMu(id);
+    }
+
+    @JavascriptInterface
+    public String getTodayCtRecord() {
+        return this.util.getTodayCtRecord();
+    }
+
+    @JavascriptInterface
+    public void addTodayCtRecord(int id) {
+        this.util.addTodayCtRecord(id);
+    }
+
+    @JavascriptInterface
+    public void clearCtRecord() {
+        this.util.clearCtRecord();
     }
 }

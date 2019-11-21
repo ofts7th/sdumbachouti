@@ -12,7 +12,12 @@
     </div>
     <div class="row csrow">
         <div class="col-xs-12">
-            <button class="btn btn-default selfile">选择文件</button>
+            <button class="btn btn-default selfile">选择数据文件</button>
+        </div>
+    </div>
+    <div class="row csrow">
+        <div class="col-xs-12">
+            <button class="btn btn-default btnClearCtRecord">清空抽题记录</button>
         </div>
     </div>
 
@@ -31,6 +36,13 @@
                  var self = $(this);
                  local.saveConfig('configDataFilePath', self.data('refreshPara'));
                  refreshConfig();
+                 alert('操作成功，请重启应用');
+                 local.exit();
+            });
+            pageEle.find('.btnClearCtRecord').click(function(){
+                 local.clearCtRecord();
+                 alert('操作成功，请重启应用');
+                 local.exit();
             });
             refreshConfig();
         });

@@ -81,15 +81,18 @@ public class DbHelper {
 	
 	class dbOpenHelper extends SQLiteOpenHelper {
 		public dbOpenHelper(Context context, String name) {
-			super(context, name, null, 1);
+			super(context, name, null, 2);
 		}
 
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL("create table config(id integer primary key autoincrement, name text, val text)");
+			db.execSQL("create table cthistory(id integer, ctdate datetime)");
 		}
 
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			
+			if(oldVersion == 1 && newVersion == 2){
+				db.execSQL("create table cthistory(id integer, ctdate datetime)");
+			}
 		}
 	}
 }
