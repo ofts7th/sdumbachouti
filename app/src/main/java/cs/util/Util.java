@@ -127,31 +127,6 @@ public class Util {
         }
     }
 
-    public static String readInStream(InputStream in) {
-        @SuppressWarnings("resource")
-        Scanner scanner = new Scanner(in).useDelimiter("\\A");
-        return scanner.hasNext() ? scanner.next() : "";
-    }
-
-    public static String getDeviceId() {
-        if (string.IsNullOrEmpty(Session.getInstance().getValue("machineId"))) {
-            String deviceId = Util.getConfig("deviceId");
-            if (string.IsNullOrEmpty(deviceId)) {
-                String baseUrl = Util.getConfig("baseUrl");
-                if (!string.IsNullOrEmpty(baseUrl)) {
-                    String uuid = UUID.randomUUID().toString();
-                    if (!string.IsNullOrEmpty(uuid)) {
-                        Session.getInstance().setValue("machineId", uuid);
-                        Util.saveConfig("deviceId", uuid);
-                    }
-                }
-            } else {
-                Session.getInstance().setValue("machineId", deviceId);
-            }
-        }
-        return Session.getInstance().getValue("machineId");
-    }
-
     private static File rootDir = null;
 
     public static File getRootDir() {
@@ -173,60 +148,6 @@ public class Util {
             exRootDir = Environment.getExternalStorageDirectory();
         }
         return exRootDir;
-    }
-
-    public static String getWebUrl(String surl) {
-        String result = "";
-        try {
-            URL url = new URL(surl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(3000);
-            InputStream in = new BufferedInputStream(conn.getInputStream());
-            result = Util.readInStream(in);
-            in.close();
-        } catch (Exception e) {
-
-        }
-        return result.trim();
-    }
-
-    public static void asyncGetWebUrl(final String surl) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                getWebUrl(surl);
-            }
-        }).start();
-    }
-
-    public static String postWebData(String surl, String data) {
-        String result = "";
-        try {
-            URL url = new URL(surl);
-            HttpURLConnection conn = (HttpURLConnection) url
-                    .openConnection();
-            conn.setConnectTimeout(3000);
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-            conn.getOutputStream().write(data.getBytes());
-
-            InputStream in = new BufferedInputStream(conn
-                    .getInputStream());
-            result = Util.readInStream(in);
-            in.close();
-        } catch (Exception e) {
-
-        }
-        return result.trim();
-    }
-
-    public static void asyncPostWebData(final String url, final String data) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                postWebData(url, data);
-            }
-        }).start();
     }
 
     public static String readAssetFile(String path) {
@@ -296,9 +217,6 @@ public class Util {
             writer.close();
         } catch (Exception e) {
         }
-    }
-
-    public static void log(String m) {
     }
 
     public static Date parseDate(String str) {
